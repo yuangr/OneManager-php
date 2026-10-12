@@ -1,0 +1,24 @@
+name: Verified cloud transport
+on:
+  pull_request:
+  push:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  transport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check changed PHP clients
+        run: |
+          php -l common.php
+          php -l disk/BaiduDisk.php
+          php -l disk/Googledrive.php
+          php -l disk/Onedrive.php
+          php -l platform/Heroku.php
+          php -l platform/TencentSCF_env.php
+          php -l platform/TencentSCF_file.php
+          php -l tests/tls_client.php
+      - name: Verify trusted, untrusted and wrong-host TLS fixtures
+        run: python3 -m unittest discover -s tests -p test_tls_transport.py
